@@ -18,7 +18,7 @@
       ?>
       
       <div class="thumbnail">
-      <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/post={{ $postID }}">
+      <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/post/{{ $postID }}">
         <img class="thumbImage" src="{{ asset('images/placeholderimg.png')}}"> 
 
         <div class="thumbTextDiv">

@@ -21,8 +21,15 @@ Route::get('/', function () {
 
 
 
-Route::get('post/', function (){
-    return view('postDetails');
+Route::get('post/{postId}', function ($postId){
+    $sql = "SELECT * FROM USER, USER_POST WHERE user_post.author = user.userID AND user_post.postID = ?";
+    $post = DB::select($sql, [$postId]);
+    if ($post) {
+        $post = $post[0]; // Get the first result
+        return view('postDetails', ['postId' => $postId])->with('post', $post);
+    } else {
+        abort(404, 'Post not found');
+    }
 });
 
 Route::get('userlist', function(){

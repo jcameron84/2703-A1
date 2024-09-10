@@ -1,44 +1,56 @@
 
-CREATE TABLE IF NOT EXISTS USER_POST (
-    postID integer not null primary key,
-    title   VARCHAR(30),
-    author  INT,  
-    message VARCHAR(100),
-    date    DATETIME,
-    FOREIGN KEY (author) REFERENCES USER(userID)
+CREATE TABLE IF NOT EXISTS Item (
+    ItemId INTEGER PRIMARY KEY,
+    Name   VARCHAR(30),
+    ManId  INT,  
+    Tracks  VARCHAR(100),
+    FOREIGN KEY (ManId) REFERENCES Manufacturer(ManId)
 );
 
-CREATE TABLE IF NOT EXISTS COMMENT (
-    commentID   INT,
-    onPost  INT,
-    author  INT,
-    date    DATETIME,
-    message VARCHAR(100),
-    PRIMARY KEY (commentID),
-    FOREIGN KEY (onPost) REFERENCES USER_POST(postID),
-    FOREIGN KEY (author) REFERENCES USER(userID)
+CREATE TABLE IF NOT EXISTS Manufacturer (
+    ManId   INTEGER PRIMARY KEY,
+    Name    VARCHAR(30)
 );
 
-CREATE TABLE IF NOT EXISTS USER (
-    userID  INTEGER PRIMARY KEY,
-    displayName VARCHAR(20)
+CREATE TABLE IF NOT EXISTS Review (
+    ReviewId   INTEGER PRIMARY KEY,
+    UserID  INT,
+    ItemId  INT,
+    Rating  INT,
+    ReviewBody VARCHAR(100),
+    Date    DATETIME,
+    FOREIGN KEY (UserId) REFERENCES User(UserId),
+    FOREIGN KEY (ItemId) REFERENCES Item(ItemId)
 );
 
+CREATE TABLE IF NOT EXISTS User (
+    UserId  INTEGER PRIMARY KEY,
+    DisplayName VARCHAR(20)
+);
+
+INSERT INTO Item (ItemId, Name, ManId, Tracks) VALUES
+    (NULL, 'In Rainbows', 1, '15 Step, Body Snachers, .....'),
+    (NULL, 'Ants From Up There', 2, 'Intro, Chaos Space Marine, ....'),
+    (NULL, 'In The Aeroplan Over The Sea', 3, 'Two Headed Boy, King Of Carrot Flowers, ...'),
+    (NULL, 'To Pimp A Butterfly', 4, 'Wesleys Theory, King Kunta, ....');
+
+INSERT INTO Manufacturer (ManId, Name) VALUES
+    (NULL, 'Radiohead'),
+    (NULL, 'Black Country New Road'),
+    (NULL, 'Neutral Milk Hotel'),
+    (NULL, 'Kendrick Lamar')
 
 
-INSERT INTO USER_POST (postID, title, author, message, date) VALUES
-    (NULL, 'New Social Media Z!!', 1, 'This is the first post on my brand new social media platform called Z!!', '2023-09-09 10:16:00'),
-    (NULL, 'Fist Post on Z!', 2, 'This new social media platform seems pretty cool!', '2023-09-09 10:30:34'),
-    (NULL, 'Selling Blue Sky', 3, 'Anyone interested in blue sky, hit me up in my Z DMs', '2023-09-09 11:00:00'),
-    (NULL, 'This is theft!!!!', 4, 'This is clear theft of my platform X formerly known as twitter!!!!', '2023-09-10 03:34:00');
+INSERT INTO Review (ReviewId, UserId, ItemId, Rating, ReviewBody, Date) VALUES
+    (NULL, 1, 1, 10, 'Incredible, best album ever!', '2024-08-10 14:21:55'),
+    (NULL, 2, 4, 8, 'Really Good!', '2021-11-10 14:21:55'),
+    (NULL, 3, 2, 7, 'Not the best but a great one for sure!', '2024-03-20 15:22:45'),
+    (NULL, 4, 3, 9, 'Very interesting!', '2022-03-16 14:21:55'),
 
-INSERT INTO COMMENT (commentID, onPost, author, date, message) VALUES
-    (NULL, 1, 4, '2023-09-09 10:24:12', 'This is clear theft!!!'),
-    (NULL, 1, 2, '2023-09-09 10:45:14', "YOU CAN'T SEE ME"),
-    (NULL, 4, 1, '2023-09-10 03-36-14', 'WAH WAH WAH');
 
-INSERT INTO USER (userID, displayName) VALUES
+INSERT INTO User (userID, DisplayName) VALUES
     (NULL, 'joelc0406'),
     (NULL, 'johnCena1'),
     (NULL, 'walterWh1t3'),
     (NULL, 'eloMoosk');
+
