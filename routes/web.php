@@ -14,21 +14,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $sql = "SELECT * FROM USER, USER_POST WHERE user_post.author = user.userID ORDER BY USER_POST.date DESC";
-    $posts = DB::select($sql);
-    return view('index')->with('posts', $posts);
+    $sql = "SELECT * FROM User, Review, Item, Manufacturer WHERE Review.ItemId = Item.ItemId AND Review.UserId = user.UserId AND Item.ManId = Manufacturer.ManId ORDER BY Review.date DESC";
+    $items = DB::select($sql);
+    return view('index')->with('items', $items);
 });
 
 
 
-Route::get('post/{postId}', function ($postId){
-    $sql = "SELECT * FROM USER, USER_POST WHERE user_post.author = user.userID AND user_post.postID = ?";
-    $post = DB::select($sql, [$postId]);
-    if ($post) {
-        $post = $post[0]; // Get the first result
-        return view('postDetails', ['postId' => $postId])->with('post', $post);
+Route::get('item/{ItemId}', function ($ItemId) {
+    $sql = "SELECT * FROM Item, Manufacturer WHERE Item.ManId = Manufacturer.ManId AND Item.ItemId = ?";
+    $item = DB::select($sql, [$ItemId]);
+
+    if ($item) {
+        $item = $item[0]; 
+        return view('postDetails', ['ItemId' => $ItemId])->with('item', $item);
     } else {
-        abort(404, 'Post not found');
+        abort(404, 'Item not found');
     }
 });
 

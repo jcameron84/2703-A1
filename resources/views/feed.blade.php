@@ -7,27 +7,29 @@
   
   <body>
     
-    @foreach($posts as $post)
-      <?php
-       $userID = $post->userID; 
-       $displayName = $post->displayName;
-       $postID = $post->postID;
-       $title = $post->title;
-       $message = $post->message;
-       $date = $post->date;
+    @foreach($items as $item)
+ 
+    <?php
+       $ItemId = $item->ItemId; 
+       $DisplayName = $item->DisplayName;
+       $ReviewId = $item->ReviewId;
+       $ItemName = $item->ItemName;
+       $ReviewBody = $item->ReviewBody;
+       $Date = $item->Date;
+       $ManName = $item->ManName;
       ?>
       
       <div class="thumbnail">
-      <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/post/{{ $postID }}">
+      <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/item/{{ $ItemId }}">
         <img class="thumbImage" src="{{ asset('images/placeholderimg.png')}}"> 
 
         <div class="thumbTextDiv">
-          <p class="thumbTitle"> {{ $title }} </p> 
-          <p class=thumbUser> {{ $displayName }} </p>
+          <p class="thumbTitle"> {{ $ItemName }} </p> 
+          <p class=thumbUser> {{ $ManName }} </p>
         </div> 
       </a> 
       
-      <p class="feedDate"> Date posted: {{ $date }}</p>
+      <p class="feedDate"> Rating: {{ $Date }}</p>
         
       </div>
       
