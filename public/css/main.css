@@ -63,7 +63,7 @@ h1  {
 
 .detailsBG {
     background-color: rgb(52,58,64);
-    height: fit-content;
+    height: 220px;;
     width: 60%;
     margin-left: auto;
     margin-right: auto;
@@ -121,4 +121,38 @@ h1  {
 .newPostForm {
     padding: 10px;
     
+}
+/* Individual review box */
+.reviewBox {
+    background-color: rgb(52,58,64);
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Reviewer's name */
+.reviewUser {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #fff;
+}
+
+/* Rating */
+.reviewRating {
+    color: #ffcc00;
+    font-size: 1em;
+}
+
+/* Review body */
+.reviewBody {
+    font-size: 1em;
+    margin: 10px 0;
+    color: #c0c0c0;
+}
+
+/* Review date */
+.reviewDate {
+    font-size: 0.9em;
+    color: #a0a0a0;
 }

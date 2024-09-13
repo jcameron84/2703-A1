@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS Item (
     ItemName   VARCHAR(30),
     ManId  INT,  
     Tracks  VARCHAR(100),
+    CoverImage VARCHAR(100),
     FOREIGN KEY (ManId) REFERENCES Manufacturer(ManId)
 );
 
@@ -33,11 +34,11 @@ INSERT INTO Manufacturer (ManName) VALUES
     ('Neutral Milk Hotel'),
     ('Kendrick Lamar');
 
-INSERT INTO Item (ItemName, ManId, Tracks) VALUES
-    ('In Rainbows', 1, '15 Step, Body Snachers, .....'),
-    ('Ants From Up There', 2, 'Intro, Chaos Space Marine, ....'),
-    ('In The Aeroplan Over The Sea', 3, 'Two Headed Boy, King Of Carrot Flowers, ...'),
-    ('To Pimp A Butterfly', 4, 'Wesleys Theory, King Kunta, ....');
+INSERT INTO Item (ItemName, ManId, Tracks, CoverImage) VALUES
+    ('In Rainbows', 1, '15 Step, Body Snachers, .....', 'images/InRainbows.png'),
+    ('Ants From Up There', 2, 'Intro, Chaos Space Marine, ....', 'images/AFUT.png'),
+    ('In The Aeroplane Over The Sea', 3, 'Two Headed Boy, King Of Carrot Flowers, ...', 'images/ITAOTS.png'),
+    ('To Pimp A Butterfly', 4, 'Wesleys Theory, King Kunta, ....', 'images/TPAB.png');
 
 INSERT INTO Review (UserId, ItemId, Rating, ReviewBody, Date) VALUES
     (1, 1, 10, 'Incredible, best album ever!', '2024-08-10 14:21:55'),

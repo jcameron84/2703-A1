@@ -22,12 +22,18 @@ Route::get('/', function () {
 
 
 Route::get('item/{ItemId}', function ($ItemId) {
-    $sql = "SELECT * FROM Item, Manufacturer WHERE Item.ManId = Manufacturer.ManId AND Item.ItemId = ?";
+    $sql = "SELECT * FROM Item, Manufacturer, Review WHERE Item.ManId = Manufacturer.ManId AND Review.ItemId = Item.ItemId AND Item.ItemId = ?";
     $item = DB::select($sql, [$ItemId]);
+
+    $sql_reviews = "SELECT Review.*, User.DisplayName FROM Review 
+                    JOIN User ON Review.UserId = User.UserId 
+                    WHERE Review.ItemId = ?
+                    ORDER BY Review.Date DESC";
+    $reviews = DB::select($sql_reviews, [$ItemId]);
 
     if ($item) {
         $item = $item[0]; 
-        return view('postDetails', ['ItemId' => $ItemId])->with('item', $item);
+        return view('postDetails', ['ItemId' => $ItemId])->with('item', $item)->with('reviews', $reviews);
     } else {
         abort(404, 'Item not found');
     }
@@ -41,24 +47,30 @@ Route::get('userlist', function(){
 
 
 
-Route::get('makePost', function () {
-    return view('newPost');
+Route::get('create', function () {
+    // Fetch manufacturers to show in the dropdown
+    $manufacturers = DB::table('Manufacturer')->get();
+    return view('addItem')->with('manufacturers', $manufacturers);
 });
 
+// Handle form submission to add a new item
+Route::post('item/store', function (Illuminate\Http\Request $request) {
+    // Validate the input
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'manufacturer_id' => 'required|exists:Manufacturer,ManId',
+    ]);
 
-Route::post('create_new_post', function () {
-    $title=request('title');
-    $author=request('displayName');
-    $message=request('message');
-    add_post($title, $author, $message);
+    // Insert the new item into the database
+    DB::table('Item')->insert([
+        'Name' => $validated['name'],
+        'ManId' => $validated['manufacturer_id'],
+        'Tracks' => '' // You can handle tracks separately if needed
+    ]);
+
+    // Redirect back to the item list or another page
+    return redirect('/')->with('success', 'Item added successfully!');
 });
-
-function add_post($title, $author, $message){
-    $sql="insert into USER_POST (postID, title, author, message, date) values (NULL, ?, ?, ?, NULL)";
-    DB::insert($sql, array($title, $author, $message));
-    $id = DB::getPdo()->lastInsertId();
-    dd($id);
-}
 
 Route::get('test', function () {
     return view('feed');

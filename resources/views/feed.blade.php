@@ -17,11 +17,12 @@
        $ReviewBody = $item->ReviewBody;
        $Date = $item->Date;
        $ManName = $item->ManName;
+       $CoverImage = $item->CoverImage;
       ?>
       
       <div class="thumbnail">
       <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/item/{{ $ItemId }}">
-        <img class="thumbImage" src="{{ asset('images/placeholderimg.png')}}"> 
+      <img class="thumbImage" src="{{ asset($CoverImage) }}">
 
         <div class="thumbTextDiv">
           <p class="thumbTitle"> {{ $ItemName }} </p> 
