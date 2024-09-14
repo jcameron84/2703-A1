@@ -13,12 +13,39 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    $sql = "SELECT * FROM User, Review, Item, Manufacturer WHERE Review.ItemId = Item.ItemId AND Review.UserId = user.UserId AND Item.ManId = Manufacturer.ManId ORDER BY Review.date DESC";
+Route::get('/', function (Illuminate\Http\Request $request) {
+  
+    $sort = $request->input('sort', 'reviews_desc'); // Default sorting method
+
+    // Base SQL query
+    $sql = "SELECT Item.*, Manufacturer.ManName, 
+                (SELECT COUNT(*) FROM Review WHERE Review.ItemId = Item.ItemId) as review_count, 
+                (SELECT AVG(Rating) FROM Review WHERE Review.ItemId = Item.ItemId) as avg_rating
+            FROM Item
+            LEFT JOIN Manufacturer ON Item.ManId = Manufacturer.ManId";
+
+    switch ($sort) {
+        case 'reviews_asc':
+            $sql .= " ORDER BY review_count ASC";
+            break;
+        case 'reviews_desc':
+            $sql .= " ORDER BY review_count DESC";
+            break;
+        case 'rating_asc':
+            $sql .= " ORDER BY avg_rating ASC";
+            break;
+        case 'rating_desc':
+            $sql .= " ORDER BY avg_rating DESC";
+            break;
+        default:
+            $sql .= " ORDER BY review_count DESC"; // Default sorting
+    }
+
+    
     $items = DB::select($sql);
+
     return view('index')->with('items', $items);
 });
-
 
 
 Route::get('item/{ItemId}', function ($ItemId) {
@@ -47,25 +74,38 @@ Route::get('userlist', function(){
 
 
 
-Route::get('create', function () {
-    // Fetch manufacturers to show in the dropdown
+Route::get('createItem', function () {
     $manufacturers = DB::table('Manufacturer')->get();
     return view('addItem')->with('manufacturers', $manufacturers);
 });
 
-// Handle form submission to add a new item
-Route::post('item/store', function (Illuminate\Http\Request $request) {
-    // Validate the input
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'manufacturer_id' => 'required|exists:Manufacturer,ManId',
-    ]);
+Route::post('/itemStore', function (Illuminate\Http\Request $request) {
+    $errors = [];
 
-    // Insert the new item into the database
+    $name = $request->input('name');
+
+    if (strlen($name) <= 2) {
+        $errors[] = 'Item name must be more than 2 characters long.';
+    } elseif (preg_match('/[-_+"\']/', $name)) { // Check for -, _, +, or "
+        $errors[] = 'Item name must not contain -, _, +, or ".';
+    }
+
+    $manufacturerId = $request->input('manufacturer_id');
+    if (empty($manufacturerId)) {
+        $errors[] = 'Manufacturer is required.';
+    } elseif (!DB::table('Manufacturer')->where('ManId', $manufacturerId)->exists()) {
+        $errors[] = 'Selected manufacturer does not exist.';
+    }
+
+    if (!empty($errors)) {
+        return redirect()->back()->withErrors($errors)->withInput();
+    }
+
     DB::table('Item')->insert([
-        'Name' => $validated['name'],
-        'ManId' => $validated['manufacturer_id'],
-        'Tracks' => '' // You can handle tracks separately if needed
+        'ItemName' => $name,
+        'ManId' => $manufacturerId,
+        'Tracks' => 'Tracks',
+        'CoverImage' => 'images/placeholderimg.png'
     ]);
 
     // Redirect back to the item list or another page

@@ -17,7 +17,7 @@
         <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/userlist">Users</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/makePost">New Post</a>
+        <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/createItem">New Item</a>
     </ul>
   </div>
 </nav>

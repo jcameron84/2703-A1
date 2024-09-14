@@ -6,23 +6,24 @@
   </head>
   
   <body>
+
+  
     
     @foreach($items as $item)
  
-    <?php
-       $ItemId = $item->ItemId; 
-       $DisplayName = $item->DisplayName;
-       $ReviewId = $item->ReviewId;
-       $ItemName = $item->ItemName;
-       $ReviewBody = $item->ReviewBody;
-       $Date = $item->Date;
-       $ManName = $item->ManName;
-       $CoverImage = $item->CoverImage;
+      <?php
+        $ItemId = $item->ItemId;
+        $ItemName = $item->ItemName;
+        $ManName = $item->ManName;
+        $CoverImage = $item->CoverImage;
+        $reviewCount = $item->review_count;
+        $avgRating = $item->avg_rating;
       ?>
       
       <div class="thumbnail">
-      <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/item/{{ $ItemId }}">
-      <img class="thumbImage" src="{{ asset($CoverImage) }}">
+        <a href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/item/{{ $ItemId }}">
+        <img class="thumbImage" src="{{ !empty($CoverImage) ? asset($CoverImage) : asset('images/placeholderimg.png') }}">
+
 
         <div class="thumbTextDiv">
           <p class="thumbTitle"> {{ $ItemName }} </p> 
@@ -30,7 +31,7 @@
         </div> 
       </a> 
       
-      <p class="feedDate"> Rating: {{ $Date }}</p>
+      <p class="feedDate"> Rating: {{ number_format($avgRating, 2) }}</p>
         
       </div>
       

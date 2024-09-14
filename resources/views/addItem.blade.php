@@ -30,7 +30,7 @@
             @endif
 
             <!-- Add item form -->
-            <form action="/item/store" method="POST">
+            <form action="itemStore" method="POST">
                 @csrf
                 <div class="form-group">
                     <label for="name">Item Name:</label>
@@ -42,7 +42,7 @@
                     <select id="manufacturer" name="manufacturer_id" class="form-control" required>
                         <option value="">Select Manufacturer</option>
                         @foreach ($manufacturers as $manufacturer)
-                            <option value="{{ $manufacturer->ManId }}">{{ $manufacturer->Name }}</option>
+                            <option value="{{ $manufacturer->ManId }}">{{ $manufacturer->ManName }}</option>
                         @endforeach
                     </select>
                 </div>
