@@ -60,16 +60,22 @@ Route::get('item/{ItemId}', function ($ItemId) {
 
     if ($item) {
         $item = $item[0]; 
-        return view('postDetails', ['ItemId' => $ItemId])->with('item', $item)->with('reviews', $reviews);
+        return view('itemDetails', ['ItemId' => $ItemId])->with('item', $item)->with('reviews', $reviews);
     } else {
         abort(404, 'Item not found');
     }
 });
 
-Route::get('userlist', function(){
-    $sql = "SELECT displayName FROM USER";
-    $users = DB::select($sql);
-    return view('userList')->with('users', $users);
+Route::get('manufacturers', function () {
+    $manufacturers = DB::table('Manufacturer')
+        ->join('Item', 'Manufacturer.ManId', '=', 'Item.ManId')
+        ->join('Review', 'Item.ItemId', '=', 'Review.ItemId')
+        ->select('Manufacturer.ManId', 'Manufacturer.ManName', 
+            DB::raw('AVG(Review.Rating) as avg_manufacturer_rating'))
+        ->groupBy('Manufacturer.ManId')
+        ->get();
+
+    return view('manList', ['manufacturers' => $manufacturers]);
 });
 
 
@@ -107,10 +113,107 @@ Route::post('/itemStore', function (Illuminate\Http\Request $request) {
         'Tracks' => 'Tracks',
         'CoverImage' => 'images/placeholderimg.png'
     ]);
-
-    // Redirect back to the item list or another page
     return redirect('/')->with('success', 'Item added successfully!');
 });
+
+//Route for creating a new reviw
+Route::get('item/{ItemId}/addReview', function ($ItemId) {
+    $item = DB::table('Item')->where('ItemId', $ItemId)->first();
+    return view('addReview')->with('item', $item);
+});
+
+//Route for handling form submission for new review
+Route::post('item/{ItemId}/storeReview', function (Illuminate\Http\Request $request, $ItemId) {
+    $errors = [];
+
+    $username = $request->input('username');
+    $originalUsername = $username;
+    $username = preg_replace('/[13579]/', '', $username);
+    if ($username !== $originalUsername) {
+        session()->flash('username_changed', "The username '$originalUsername' was changed to '$username' after odd numbers were removed.");
+    }
+
+    $rating = $request->input('rating');
+    $reviewBody = $request->input('reviewBody');
+
+    if (strlen($username) <= 2) {
+        $errors[] = 'user name must be more than 2 characters long.';
+    } elseif (preg_match('/[-_+"\']/', $username)) { // Check for -, _, +, or "
+        $errors[] = 'user name must not contain -, _, +, or ".';
+    }
+
+
+    if (!empty($errors)) {
+        return redirect()->back()->withErrors($errors)->withInput();
+    }
+
+        // Check if the user exists by username
+        $user = DB::table('User')->where('DisplayName', $username)->first();
+
+        // If the user does not exist, insert them into the User table
+        if (!$user) {
+            $userId = DB::table('User')->insertGetId([
+                'DisplayName' => $username,
+            ]);
+        } else {
+            $userId = $user->UserId; 
+        }
+    
+        // Check if the user has already reviewed this item
+        $existingReview = DB::table('review')
+                            ->where('ItemId', $ItemId)
+                            ->where('UserId', $userId)
+                            ->first();
+    
+        if ($existingReview) {
+            // If the user already reviewed this item error
+            return redirect()->back()->withErrors(['error' => 'You have already reviewed this item.'])->withInput();
+        }
+    
+        // If no existing review, insert the new review
+        DB::table('Review')->insert([
+            'ItemId' => $ItemId,
+            'UserId' => $userId, 
+            'Rating' => $rating,
+            'ReviewBody' => $reviewBody,
+            'Date' => now(),
+        ]);
+    
+        return redirect('item/' . $ItemId)->with('success', 'Review added successfully!');
+    });
+
+    //Route for deleting an item
+    Route::delete('item/{ItemId}/delete', function ($ItemId) {
+        DB::transaction(function () use ($ItemId) {
+            // Delete all reviews associated with the item
+            DB::table('Review')->where('ItemId', $ItemId)->delete();
+    
+            // Delete the item itself
+            DB::table('Item')->where('ItemId', $ItemId)->delete();
+        });
+
+        return redirect('/')->with('success', 'Item and all associated reviews have been deleted successfully.');
+    });
+
+
+
+
+    Route::get('manufacturer/{ManId}/items', function ($ManId) {
+        // Query to get items for the manufacturer and their average rating
+        $items = DB::table('Item')
+            ->leftJoin('Review', 'Item.ItemId', '=', 'Review.ItemId')
+            ->where('Item.ManId', $ManId)
+            ->select('Item.ItemId', 'Item.ItemName', 
+                DB::raw('AVG(Review.Rating) as avg_item_rating'))
+            ->groupBy('Item.ItemId')
+            ->get();
+    
+        // Get manufacturer name for display
+        $manufacturer = DB::table('Manufacturer')->where('ManId', $ManId)->first();
+    
+        return view('manItemList', ['items' => $items, 'manufacturer' => $manufacturer]);
+    });
+
 
 Route::get('test', function () {
     return view('feed');

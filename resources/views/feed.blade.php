@@ -4,6 +4,12 @@
     <meta charset="utf-8">
     <link rel="stylesheet" tpye="text/css" href="css/main.css">
   </head>
+
+    @if (session('success'))
+      <div class="alert alert-success">
+          {{ session('success') }}
+      </div>
+     @endif
   
   <body>
 
@@ -18,6 +24,7 @@
         $CoverImage = $item->CoverImage;
         $reviewCount = $item->review_count;
         $avgRating = $item->avg_rating;
+        $reviewCount = $item->review_count;
       ?>
       
       <div class="thumbnail">
@@ -31,7 +38,8 @@
         </div> 
       </a> 
       
-      <p class="feedDate"> Rating: {{ number_format($avgRating, 2) }}</p>
+      <p class="feedDate"> Average Rating: {{ number_format($avgRating, 2) }}</p>
+      <p class="feedDate"> Number of Reviews: {{ $reviewCount }}</p>
         
       </div>
       

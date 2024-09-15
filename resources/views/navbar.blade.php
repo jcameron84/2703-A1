@@ -14,7 +14,7 @@
         <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/userlist">Users</a>
+        <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/manufacturers">Manufacturers</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="https://s5220233.elf.ict.griffith.edu.au/WebAppDev/AssignmentPart1/public/createItem">New Item</a>

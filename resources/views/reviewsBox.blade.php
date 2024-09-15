@@ -1,6 +1,7 @@
 <div class="detailsCommentBox">
-      <div class="commentTitle">
+      <div class="commentTitleBox">
         <p class="commentTitle">Reviews</p>
+        <a href="{{ url('item/' . $ItemId . '/addReview') }}" class="btn btn-primary">Add Review</a>
       </div>   
       @if (count($reviews) > 0)
             @foreach ($reviews as $review)
